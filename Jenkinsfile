@@ -1,5 +1,8 @@
 pipeline {
 	agent any
+	triggers {
+		pollSCM('* * * * *')
+	}
 	stages {
 		stage("Compile") {
 			steps {
@@ -31,6 +34,18 @@ pipeline {
 					reportName: "Checkstyle Report"
 				])
 			}
+		}
+	}
+	post {
+		always {
+			slackSend channel: '#builds',
+			color: 'good',
+			message: "Your buiild completed, please check: ${env.BUILD_URL}"
+		}
+		failure {
+			slackSend channel: '#builds-failure',
+			color: 'danger',
+			message: "The pipeline ${currentBuild.fullDisplayName} failed."
 		}
 	}
 }
