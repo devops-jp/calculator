@@ -76,6 +76,8 @@ pipeline {
 	}
 	post {
 		always {
+			sh "docker stop calculator"
+			
 			slackSend channel: '#builds',
 			color: 'good',
 			message: "Your buiild completed, please check: ${env.BUILD_URL}"
