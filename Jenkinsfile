@@ -62,7 +62,7 @@ pipeline {
 				sh "docker push devopsjp/calculator"
 			}
 		}
-		stage("Deploye to staging") {
+		stage("Deploy to staging") {
 			steps {
 				sh "docker run -d --rm -p 8765:8081 --name calculator devopsjp/calculator"
 			}
@@ -70,7 +70,7 @@ pipeline {
 		stage("Acceptance test") {
 			steps {
 				sleep 60
-				sh "chmod +x acceptance_test.sh && ./acceptance_test.sh"
+				sh "./gradlew acceptanceTest -Dcalculator.url=http://localhost:8765"
 			}
 		}
 	}
