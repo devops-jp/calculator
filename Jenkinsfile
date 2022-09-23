@@ -42,7 +42,7 @@ pipeline {
 		}
 		stage("Docker build") {
 			steps {
-				sh "docker build -t devopsjp/calculator ."
+				sh "docker build -t devopsjp/calculator:${BUILD_TIMESTAMP} ."
 			}
 		}
 		stage("Docker login") {
@@ -59,18 +59,18 @@ pipeline {
 		}
 		stage("Docker push") {
 			steps {
-				sh "docker push devopsjp/calculator"
+				sh "docker push devopsjp/calculator:${BUILD_TIMESTAMP}"
 			}
 		}
 		stage("Deploy to staging") {
 			steps {
-				sh "docker run -d --rm -p 8765:8081 --name calculator devopsjp/calculator"
+				sh "docker run -d --rm -p 8765:8081 --name calculator devopsjp/calculator:${BUILD_TIMESTAMP}"
 			}
 		}
 		stage("Acceptance test") {
 			steps {
 				sleep 60
-				sh "./gradlew acceptanceTest -Dcalculator.url=http://docker:8765"
+				sh "./gradlew acceptanceTest -Dcalculator.url=http://localhost:8765"
 			}
 		}
 	}
